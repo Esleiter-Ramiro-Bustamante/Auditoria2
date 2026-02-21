@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta name="referrer" content="no-referrer">
+<title>NIA 700 — Evaluación de Auditoría</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ─── TOKENS ─────────────────────────────────────── */
+:root {
+  --ink:     #0d0d0d;
+  --ink-60:  rgba(13,13,13,.6);
+  --ink-20:  rgba(13,13,13,.12);
+  --gold:    #c9a84c;
+  --gold-lt: #f5e9c8;
+  --cream:   #faf7f0;
+  --white:   #ffffff;
+  --emerald: #0f7b52;
+  --ruby:    #c0392b;
+  --sapphire:#1a5f9e;
+  --amber:   #d97706;
+  --r: 1rem;
+}
+
+/* ─── RESET ─────────────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  font-family:'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--ink);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ─── NOISE TEXTURE OVERLAY ─────────────────────── */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none; z-index:0;
+}
+
+/* ─── GOLD ACCENT LINE TOP ──────────────────────── */
+body::after {
+  content:'';
+  position:fixed; top:0; left:0; right:0;
+  height:3px;
+  background: linear-gradient(90deg, transparent, var(--gold) 20%, var(--gold) 80%, transparent);
+  z-index:100;
+}
+
+/* ─── LAYOUT ─────────────────────────────────────── */
+.stage {
+  position:relative; z-index:1;
+  min-height:100vh;
+  display:flex; align-items:center; justify-content:center;
+  padding:60px 20px 80px;
+}
+
+.panel {
+  width:100%; max-width:780px;
+  background:var(--white);
+  border:1px solid var(--ink-20);
+  box-shadow: 0 2px 4px rgba(0,0,0,.04), 0 24px 64px rgba(0,0,0,.08), 0 0 0 1px rgba(201,168,76,.15);
+  position:relative;
+  overflow:hidden;
+}
+
+/* Corner ornaments */
+.panel::before, .panel::after {
+  content:'';
+  position:absolute;
+  width:40px; height:40px;
+  border-color: var(--gold);
+  border-style:solid;
+  opacity:.5;
+}
+.panel::before { top:12px; left:12px; border-width:1px 0 0 1px; }
+.panel::after  { bottom:12px; right:12px; border-width:0 1px 1px 0; }
+
+.panel-inner { padding:56px 60px 60px; }
+
+/* ─── HEADER ─────────────────────────────────────── */
+.masthead {
+  text-align:center;
+  padding-bottom:40px;
+  border-bottom:1px solid var(--ink-20);
+  margin-bottom:40px;
+  position:relative;
+}
+.masthead::after {
+  content:'';
+  position:absolute; bottom:-1px; left:50%; transform:translateX(-50%);
+  width:60px; height:2px;
+  background:var(--gold);
+}
+
+.eyebrow {
+  font-family:'DM Mono', monospace;
+  font-size:11px; /* ✏️ TAMAÑO: texto pequeño de categoría superior (ej. "Contaduría Pública · Auditoría II") — recomendado: 10px–13px */
+  font-weight:500;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:var(--gold);
+  display:block;
+  margin-bottom:20px;
+}
+
+.masthead-icon {
+  font-size:52px; /* ✏️ TAMAÑO: emoji/ícono principal de la pantalla de inicio y resultados — recomendado: 40px–70px */
+  display:block;
+  margin:0 auto 20px;
+  filter:grayscale(.2);
+  animation: float 4s ease-in-out infinite;
+}
+@keyframes float {
+  0%,100% { transform:translateY(0); }
+  50%      { transform:translateY(-8px); }
+}
+
+.masthead h1 {
+  font-family:'Playfair Display', serif;
+  font-size:clamp(28px,4vw,42px); /* ✏️ TAMAÑO: título principal "Evaluación sobre el Informe del Auditor" — mín. 28px en móvil, máx. 42px en escritorio. Cambia los dos valores para ajustar el rango */
+  font-weight:900;
+  letter-spacing:-.5px;
+  line-height:1.15;
+  color:var(--ink);
+  margin-bottom:10px;
+}
+
+.masthead h1 em {
+  font-style:normal;
+  color:var(--gold);
+}
+
+.masthead-subtitle {
+  font-size:15px; /* ✏️ TAMAÑO: subtítulo "Norma Internacional de Auditoría 700" — recomendado: 13px–17px */
+  color:var(--ink-60);
+  font-weight:300;
+  letter-spacing:.3px;
+}
+
+/* ─── RULES CARD ─────────────────────────────────── */
+.rules {
+  background:var(--cream);
+  border:1px solid var(--ink-20);
+  padding:28px 32px;
+  margin-bottom:36px;
+  position:relative;
+}
+.rules-title {
+  font-family:'DM Mono', monospace;
+  font-size:10px; /* ✏️ TAMAÑO: encabezado "Cómo funciona" dentro del recuadro de instrucciones — recomendado: 9px–12px */
+  letter-spacing:2px; text-transform:uppercase;
+  color:var(--gold); margin-bottom:16px;
+}
+.rules-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px 24px;
+}
+.rule-item {
+  display:flex; align-items:center; gap:10px;
+  font-size:14px; /* ✏️ TAMAÑO: texto de cada instrucción (ej. "14 preguntas de opción múltiple") — recomendado: 13px–16px */
+  color:var(--ink-60);
+}
+.rule-item span:first-child { font-size:18px; /* ✏️ TAMAÑO: emoji/ícono al lado de cada instrucción — recomendado: 16px–22px */ flex-shrink:0; }
+
+/* ─── INPUT ──────────────────────────────────────── */
+.field { margin-bottom:28px; }
+
+.field-label {
+  display:block;
+  font-size:11px; /* ✏️ TAMAÑO: etiqueta "Tu nombre completo" encima del campo — recomendado: 10px–13px */
+  font-weight:600;
+  letter-spacing:2px; text-transform:uppercase;
+  color:var(--ink-60);
+  margin-bottom:10px;
+}
+
+.field-wrap { position:relative; }
+
+.field-input {
+  width:100%;
+  background:transparent;
+  border:none;
+  border-bottom:2px solid var(--ink-20);
+  padding:14px 14px 14px 0;
+  font-family:'DM Sans', sans-serif;
+  font-size:20px; /* ✏️ TAMAÑO: texto que escribe el estudiante en el campo del nombre — recomendado: 16px–24px */
+  font-weight:500;
+  color:var(--ink);
+  transition:border-color .25s;
+  outline:none;
+}
+.field-input::placeholder { color:var(--ink-20); font-weight:300; }
+.field-input:focus { border-color:var(--ink); }
+.field-input.err { border-color:var(--ruby); animation:shake .4s ease; }
+
+.field-line {
+  position:absolute; bottom:0; left:0;
+  width:0; height:2px;
+  background:var(--gold);
+  transition:width .4s cubic-bezier(.4,0,.2,1);
+}
+.field-input:focus ~ .field-line { width:100%; }
+
+.field-error {
+  font-size:12px; /* ✏️ TAMAÑO: mensaje de error de validación del nombre — recomendado: 11px–14px */
+  color:var(--ruby);
+  margin-top:8px; display:none; font-weight:500;
+}
+.field-error.show { display:block; animation:fadeUp .3s ease; }
+
+/* ─── BUTTONS ────────────────────────────────────── */
+.btn-primary {
+  display:block; width:100%;
+  background:var(--ink);
+  color:var(--white);
+  border:none; cursor:pointer;
+  font-family:'DM Sans', sans-serif;
+  font-size:14px; /* ✏️ TAMAÑO: texto del botón "Comenzar evaluación →" — recomendado: 13px–16px */
+  font-weight:600;
+  letter-spacing:2px; text-transform:uppercase;
+  padding:20px 40px;
+  position:relative; overflow:hidden;
+  transition:background .25s, transform .15s;
+}
+.btn-primary::before {
+  content:'';
+  position:absolute; inset:0;
+  background:var(--gold);
+  transform:translateX(-101%);
+  transition:transform .35s cubic-bezier(.4,0,.2,1);
+}
+.btn-primary:hover { transform:translateY(-1px); }
+.btn-primary:hover::before { transform:translateX(0); }
+.btn-primary span { position:relative; z-index:1; }
+.btn-primary:active { transform:translateY(1px); }
+
+.btn-ghost {
+  display:inline-flex; align-items:center; gap:8px;
+  background:transparent;
+  color:var(--ink);
+  border:1px solid var(--ink-20);
+  cursor:pointer;
+  font-family:'DM Sans', sans-serif;
+  font-size:13px; /* ✏️ TAMAÑO: botón secundario "↩ Reintentar" y "Siguiente →" — recomendado: 12px–15px */
+  font-weight:500;
+  letter-spacing:1px;
+  padding:14px 24px;
+  transition:all .2s;
+}
+.btn-ghost:hover {
+  border-color:var(--ink);
+  background:var(--ink);
+  color:var(--white);
+}
+
+.btn-emerald {
+  background:var(--emerald);
+  color:var(--white);
+  border:none; cursor:pointer;
+  font-family:'DM Sans', sans-serif;
+  font-size:13px; /* ✏️ TAMAÑO: botón "⬇ Descargar PDF" — recomendado: 12px–15px */
+  font-weight:600;
+  letter-spacing:1.5px; text-transform:uppercase;
+  padding:14px 28px;
+  transition:opacity .2s, transform .15s;
+}
+.btn-emerald:hover { opacity:.88; transform:translateY(-1px); }
+
+.btn-row {
+  display:flex; gap:12px; margin-top:32px; flex-wrap:wrap;
+}
+
+/* ─── PROGRESS ───────────────────────────────────── */
+.progress-rail {
+  height:2px; background:var(--ink-20);
+  margin-bottom:40px; position:relative;
+}
+.progress-fill-bar {
+  position:absolute; top:0; left:0; height:100%;
+  background:var(--gold);
+  transition:width .6s cubic-bezier(.4,0,.2,1);
+}
+
+.quiz-meta {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:8px;
+}
+
+.q-counter {
+  font-family:'DM Mono', monospace;
+  font-size:12px; /* ✏️ TAMAÑO: contador "01 / 14" en la parte superior del quiz — recomendado: 11px–14px */
+  letter-spacing:1px;
+  color:var(--ink-60);
+}
+
+.q-user {
+  font-size:13px; /* ✏️ TAMAÑO: nombre del estudiante mostrado durante el quiz — recomendado: 12px–15px */
+  color:var(--ink-60);
+  font-weight:500;
+}
+
+/* ─── TIMER ──────────────────────────────────────── */
+.timer-wrap {
+  display:flex; align-items:center; gap:8px;
+  margin-bottom:32px;
+}
+.timer-ring {
+  position:relative;
+  width:48px; height:48px; flex-shrink:0;
+}
+.timer-ring svg { transform:rotate(-90deg); }
+.timer-ring circle.track { fill:none; stroke:var(--ink-20); stroke-width:3; }
+.timer-ring circle.fill  { fill:none; stroke:var(--gold); stroke-width:3;
+  stroke-dasharray:125.6; stroke-dashoffset:0;
+  transition:stroke-dashoffset .9s linear, stroke .3s;
+  stroke-linecap:round; }
+.timer-ring circle.fill.warn  { stroke:var(--amber); }
+.timer-ring circle.fill.danger{ stroke:var(--ruby); }
+.timer-num {
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'DM Mono', monospace;
+  font-size:13px; /* ✏️ TAMAÑO: número de segundos dentro del círculo del temporizador — recomendado: 11px–15px */
+  font-weight:500;
+  color:var(--ink);
+}
+.timer-label { font-size:13px; /* ✏️ TAMAÑO: texto "segundos restantes" junto al temporizador — recomendado: 12px–15px */ color:var(--ink-60); }
+.streak-pill {
+  margin-left:auto;
+  background:var(--ink);
+  color:var(--gold);
+  font-family:'DM Mono', monospace;
+  font-size:11px; /* ✏️ TAMAÑO: badge de racha "🔥 ×3" en la esquina superior derecha del quiz — recomendado: 10px–13px */
+  letter-spacing:1px;
+  padding:6px 14px;
+  display:none;
+  animation:popIn .35s cubic-bezier(.34,1.56,.64,1);
+}
+.streak-pill.visible { display:inline-block; }
+
+/* ─── QUESTION ───────────────────────────────────── */
+.q-num {
+  font-family:'DM Mono', monospace;
+  font-size:11px; /* ✏️ TAMAÑO: etiqueta "Pregunta 1 de 14" en dorado sobre la pregunta — recomendado: 10px–13px */
+  color:var(--gold);
+  letter-spacing:2px; text-transform:uppercase;
+  margin-bottom:12px;
+}
+
+.q-text {
+  font-family:'Playfair Display', serif;
+  font-size:clamp(18px,2.5vw,24px); /* ✏️ TAMAÑO: texto de la pregunta — mín. 18px en móvil, máx. 24px en escritorio. Cambia ambos valores para ajustar el rango */
+  font-weight:700;
+  line-height:1.45;
+  color:var(--ink);
+  margin-bottom:36px;
+  animation:fadeUp .4s cubic-bezier(.4,0,.2,1);
+}
+
+/* ─── OPTIONS ────────────────────────────────────── */
+.options { display:flex; flex-direction:column; gap:10px; }
+
+.opt {
+  display:flex; align-items:center; gap:16px;
+  padding:18px 20px;
+  border:1px solid var(--ink-20);
+  background:var(--white);
+  cursor:pointer;
+  transition:border-color .2s, background .2s, transform .15s;
+  animation:slideIn .35s cubic-bezier(.4,0,.2,1) both;
+  position:relative; overflow:hidden;
+}
+.opt::after {
+  content:'';
+  position:absolute; inset:0;
+  background:var(--ink);
+  opacity:0;
+  transition:opacity .2s;
+}
+.opt:hover:not(.locked) { border-color:var(--ink); transform:translateX(4px); }
+.opt:hover:not(.locked)::after { opacity:.03; }
+
+.opt:nth-child(1) { animation-delay:.04s; }
+.opt:nth-child(2) { animation-delay:.08s; }
+.opt:nth-child(3) { animation-delay:.12s; }
+.opt:nth-child(4) { animation-delay:.16s; }
+
+@keyframes slideIn {
+  from { opacity:0; transform:translateX(-16px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+
+.opt.locked { cursor:default; }
+
+.opt.opt-correct {
+  border-color:var(--emerald);
+  background:#f0faf5;
+  animation:popIn .4s cubic-bezier(.34,1.56,.64,1);
+}
+.opt.opt-wrong {
+  border-color:var(--ruby);
+  background:#fdf0f0;
+  animation:shake .4s ease;
+}
+
+.opt-letter {
+  width:32px; height:32px;
+  border:1px solid var(--ink-20);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'DM Mono', monospace;
+  font-size:12px; /* ✏️ TAMAÑO: letra de opción (A / B / C / D) en el cuadro de cada respuesta — recomendado: 11px–14px */
+  font-weight:500;
+  color:var(--ink-60);
+  flex-shrink:0;
+  transition:all .2s;
+}
+.opt-correct .opt-letter { background:var(--emerald); border-color:var(--emerald); color:var(--white); }
+.opt-wrong   .opt-letter { background:var(--ruby);    border-color:var(--ruby);    color:var(--white); }
+
+.opt-text {
+  flex:1; font-size:15px; /* ✏️ TAMAÑO: texto de cada opción de respuesta — recomendado: 14px–17px */
+  line-height:1.5;
+  color:var(--ink); transition:color .2s;
+}
+
+.opt-badge {
+  font-size:20px; /* ✏️ TAMAÑO: emoji ✓ / ✕ que aparece al seleccionar una opción — recomendado: 18px–24px */
+  flex-shrink:0;
+  opacity:0; transform:scale(0);
+  transition:all .3s cubic-bezier(.34,1.56,.64,1);
+}
+.opt-correct .opt-badge, .opt-wrong .opt-badge { opacity:1; transform:scale(1); }
+
+/* ─── FEEDBACK CARD ──────────────────────────────── */
+.feedback {
+  margin-top:24px;
+  padding:24px 28px;
+  border-left:3px solid var(--gold);
+  background:var(--cream);
+  animation:fadeUp .4s cubic-bezier(.4,0,.2,1);
+  display:none;
+}
+.feedback.show { display:block; }
+.feedback-head {
+  font-family:'Playfair Display', serif;
+  font-size:17px; /* ✏️ TAMAÑO: encabezado del feedback (ej. "¡Correcto! Excelente dominio…") — recomendado: 15px–20px */
+  font-weight:700;
+  margin-bottom:10px;
+}
+.feedback.fb-correct { border-color:var(--emerald); }
+.feedback.fb-wrong   { border-color:var(--ruby); }
+.feedback.fb-timeout { border-color:var(--amber); }
+.feedback.fb-correct .feedback-head { color:var(--emerald); }
+.feedback.fb-wrong   .feedback-head { color:var(--ruby); }
+.feedback.fb-timeout .feedback-head { color:var(--amber); }
+.feedback-body { font-size:14px; /* ✏️ TAMAÑO: cuerpo del feedback (respuesta correcta cuando falla) — recomendado: 13px–16px */ line-height:1.75; color:var(--ink-60); }
+.feedback-exp {
+  margin-top:12px;
+  padding-top:12px;
+  border-top:1px solid var(--ink-20);
+  font-size:13px; /* ✏️ TAMAÑO: texto de explicación de la respuesta en cursiva — recomendado: 12px–15px */
+  line-height:1.7;
+  color:var(--ink); font-style:italic;
+}
+
+.next-btn-wrap { margin-top:20px; text-align:right; }
+
+/* ─── RESULTS ────────────────────────────────────── */
+.results-hero {
+  text-align:center;
+  padding-bottom:40px;
+  border-bottom:1px solid var(--ink-20);
+  margin-bottom:40px;
+  position:relative;
+}
+.results-hero::after {
+  content:'';
+  position:absolute; bottom:-1px; left:50%; transform:translateX(-50%);
+  width:60px; height:2px; background:var(--gold);
+}
+
+.result-grade {
+  font-family:'Playfair Display', serif;
+  font-size:clamp(80px,15vw,120px); /* ✏️ TAMAÑO: letra de calificación gigante (A/B/C/D/F) en resultados — mín. 80px móvil, máx. 120px escritorio */
+  font-weight:900;
+  line-height:1;
+  letter-spacing:-4px;
+  margin:16px 0;
+  background: linear-gradient(135deg, var(--gold) 0%, #8b6914 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  animation: gradeIn .6s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes gradeIn {
+  from { opacity:0; transform:scale(.5) rotate(-10deg); }
+  to   { opacity:1; transform:scale(1) rotate(0deg); }
+}
+
+.grade-badge-F { background:linear-gradient(135deg, var(--ruby),  #7f1d1d) !important; }
+.grade-badge-D { background:linear-gradient(135deg, #d97706,      #92400e) !important; }
+.grade-badge-C { background:linear-gradient(135deg, var(--amber),  #78350f) !important; }
+.grade-badge-B { background:linear-gradient(135deg, var(--sapphire),#1e3a5f) !important; }
+.grade-badge-A { background:linear-gradient(135deg, var(--gold),   #8b6914) !important; }
+
+.result-msg {
+  font-family:'Playfair Display', serif;
+  font-size:20px; /* ✏️ TAMAÑO: mensaje principal de resultados (ej. "¡Dominio sobresaliente!") — recomendado: 17px–24px */
+  font-style:italic;
+  color:var(--ink-60);
+  margin-bottom:6px;
+}
+.result-sub { font-size:14px; /* ✏️ TAMAÑO: descripción debajo del mensaje de resultados — recomendado: 13px–16px */ color:var(--ink-60); max-width:460px; margin:0 auto; line-height:1.6; }
+
+/* Stats row */
+.stats-row {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--ink-20);
+  border:1px solid var(--ink-20);
+  margin-bottom:40px;
+}
+.stat-cell {
+  background:var(--white);
+  padding:28px 20px;
+  text-align:center;
+  animation:fadeUp .4s ease both;
+}
+.stat-cell:nth-child(2) { animation-delay:.1s; }
+.stat-cell:nth-child(3) { animation-delay:.2s; }
+.stat-num {
+  font-family:'Playfair Display', serif;
+  font-size:clamp(32px,5vw,48px); /* ✏️ TAMAÑO: números grandes de estadísticas (porcentaje, correctas, incorrectas) — mín. 32px móvil, máx. 48px escritorio */
+  font-weight:900;
+  color:var(--ink);
+  display:block;
+  line-height:1;
+  margin-bottom:8px;
+}
+.stat-label {
+  font-size:11px; /* ✏️ TAMAÑO: etiquetas de las estadísticas ("Porcentaje", "Correctas", "Incorrectas") — recomendado: 10px–13px */
+  letter-spacing:2px; text-transform:uppercase;
+  color:var(--ink-60); font-weight:500;
+  font-family:'DM Mono', monospace;
+}
+
+/* Score bar */
+.score-viz {
+  margin-bottom:36px;
+}
+.score-viz-label {
+  display:flex; justify-content:space-between;
+  font-size:12px; /* ✏️ TAMAÑO: etiquetas "0%" / "Resultado" / "100%" sobre la barra de puntaje — recomendado: 11px–14px */
+  color:var(--ink-60);
+  margin-bottom:8px; font-family:'DM Mono', monospace;
+}
+.score-viz-track {
+  height:8px; background:var(--ink-20);
+  position:relative;
+}
+.score-viz-fill {
+  position:absolute; top:0; left:0;
+  height:100%; background:var(--gold);
+  width:0;
+  transition:width 1.2s cubic-bezier(.4,0,.2,1) .4s;
+}
+
+/* Review list */
+.review-header {
+  font-family:'DM Mono', monospace;
+  font-size:10px; /* ✏️ TAMAÑO: título "Revisión de respuestas" sobre la lista de revisión — recomendado: 9px–12px */
+  letter-spacing:2px; text-transform:uppercase;
+  color:var(--gold); margin-bottom:20px;
+  padding-bottom:12px;
+  border-bottom:1px solid var(--ink-20);
+}
+
+.review-item {
+  padding:20px 0;
+  border-bottom:1px solid var(--ink-20);
+  animation:fadeUp .3s ease both;
+}
+.review-row1 {
+  display:flex; gap:12px; align-items:flex-start;
+  margin-bottom:10px;
+}
+.review-idx {
+  font-family:'DM Mono', monospace;
+  font-size:11px; /* ✏️ TAMAÑO: número de pregunta en la revisión (ej. "01", "02") — recomendado: 10px–13px */
+  color:var(--gold);
+  flex-shrink:0; margin-top:3px;
+}
+.review-q { font-weight:600; font-size:14px; /* ✏️ TAMAÑO: texto de la pregunta en la sección de revisión — recomendado: 13px–16px */ line-height:1.5; }
+.review-status {
+  margin-left:auto; flex-shrink:0;
+  font-family:'DM Mono', monospace;
+  font-size:10px; /* ✏️ TAMAÑO: badge "Correcto" / "Incorrecto" en la revisión — recomendado: 9px–12px */
+  letter-spacing:1px; text-transform:uppercase;
+  padding:4px 10px;
+  font-weight:600;
+}
+.review-status.ok  { background:var(--emerald); color:var(--white); }
+.review-status.bad { background:var(--ruby);    color:var(--white); }
+
+.review-answers { margin-left:26px; font-size:13px; /* ✏️ TAMAÑO: texto de respuesta del estudiante y respuesta correcta en revisión — recomendado: 12px–15px */ line-height:1.8; color:var(--ink-60); }
+.review-answers strong { color:var(--ink); }
+.review-exp {
+  margin-left:26px;
+  margin-top:8px;
+  font-size:12px; /* ✏️ TAMAÑO: explicación en cursiva dentro de cada ítem de revisión — recomendado: 11px–14px */
+  font-style:italic;
+  line-height:1.7;
+  color:var(--ink-60);
+  padding-top:8px;
+  border-top:1px dashed var(--ink-20);
+}
+
+/* ─── ANIMATIONS ─────────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+@keyframes popIn {
+  from { opacity:0; transform:scale(.7); }
+  to   { opacity:1; transform:scale(1); }
+}
+@keyframes shake {
+  0%,100% { transform:translateX(0); }
+  20%      { transform:translateX(-8px); }
+  40%      { transform:translateX(8px); }
+  60%      { transform:translateX(-5px); }
+  80%      { transform:translateX(5px); }
+}
+@keyframes panelIn {
+  from { opacity:0; transform:translateY(30px) scale(.98); }
+  to   { opacity:1; transform:translateY(0)    scale(1); }
+}
+.panel { animation:panelIn .5s cubic-bezier(.4,0,.2,1); }
+
+/* ─── CONFETTI ───────────────────────────────────── */
+.confetti-bit {
+  position:fixed; top:-20px;
+  pointer-events:none; z-index:9999;
+  animation:confFall linear forwards;
+}
+@keyframes confFall {
+  to { transform:translateY(110vh) rotate(720deg); opacity:0; }
+}
+
+/* ─── HIDDEN ─────────────────────────────────────── */
+.hidden { display:none !important; }
+
+/* ─── RESPONSIVE ─────────────────────────────────── */
+@media(max-width:640px){
+  .panel-inner { padding:36px 24px 40px; }
+  .rules-grid  { grid-template-columns:1fr; }
+  .stats-row   { grid-template-columns:1fr; }
+  .btn-row     { flex-direction:column; }
+  .result-grade{ font-size:80px; /* ✏️ TAMAÑO: calificación gigante en pantallas pequeñas (móvil) — recomendado: 60px–100px */ }
+}
+</style>
+</head>
+<body>
+
+<div class="stage">
+<div class="panel">
+<div class="panel-inner">
+
+  <!-- ══════════════════════════════════════════
+       PANTALLA 0: INICIO
+  ══════════════════════════════════════════ -->
+  <div id="s-start">
+
+    <div class="masthead">
+      <span class="eyebrow">Contaduría Pública · Auditoría II</span>
+      <span class="masthead-icon">🔍</span>
+      <h1>Evaluación sobre el<br><em>Informe del Auditor</em></h1>
+      <p class="masthead-subtitle">Norma Internacional de Auditoría 700 — Revisión 2024</p>
+    </div>
+
+    <div class="rules">
+      <p class="rules-title">Cómo funciona</p>
+      <div class="rules-grid">
+        <div class="rule-item"><span>📋</span><span>14 preguntas de opción múltiple</span></div>
+        <div class="rule-item"><span>⏱️</span><span>30 segundos por pregunta</span></div>
+        <div class="rule-item"><span>💡</span><span>Explicación inmediata tras cada respuesta</span></div>
+        <div class="rule-item"><span>📄</span><span>Descarga tus resultados en PDF</span></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label" for="inp-name">Tu nombre completo</label>
+      <div class="field-wrap">
+        <input
+          id="inp-name"
+          class="field-input"
+          type="text"
+          placeholder="Ej. María García López"
+          maxlength="80"
+          autocomplete="off"
+          spellcheck="false"
+          aria-required="true"
+        >
+        <div class="field-line"></div>
+      </div>
+      <p class="field-error" id="name-err" role="alert"></p>
+    </div>
+
+    <button class="btn-primary" onclick="startQuiz()">
+      <span>Comenzar evaluación →</span>
+    </button>
+
+    <p style="text-align:center;margin-top:20px;font-size:18px;color:var(--ink-60);">
+      Mtra. Jaquelina Judith Sánchez Antele
+    </p>
+
+  </div><!-- /s-start -->
+
+  <!-- ══════════════════════════════════════════
+       PANTALLA 1: PREGUNTA
+  ══════════════════════════════════════════ -->
+  <div id="s-quiz" class="hidden">
+
+    <div class="quiz-meta">
+      <span class="q-counter" id="qCounter">01 / 14</span>
+      <span class="q-user"   id="qUser"></span>
+    </div>
+    <div class="progress-rail">
+      <div class="progress-fill-bar" id="progBar" style="width:0%"></div>
+    </div>
+
+    <div class="timer-wrap">
+      <div class="timer-ring">
+        <svg width="48" height="48" viewBox="0 0 48 48">
+          <circle class="track" cx="24" cy="24" r="20"/>
+          <circle class="fill"  cx="24" cy="24" r="20" id="timerArc"/>
+        </svg>
+        <div class="timer-num" id="timerNum">30</div>
+      </div>
+      <span class="timer-label" id="timerLabel">segundos restantes</span>
+      <div class="streak-pill" id="streakPill"></div>
+    </div>
+
+    <div id="q-num-label" class="q-num"></div>
+    <div class="q-text" id="qText"></div>
+    <div class="options" id="opts"></div>
+    <div class="feedback" id="feedback">
+      <div class="feedback-head" id="fb-head"></div>
+      <div class="feedback-body" id="fb-body"></div>
+      <div class="feedback-exp"  id="fb-exp"></div>
+    </div>
+    <div class="next-btn-wrap hidden" id="nextWrap">
+      <button class="btn-ghost" onclick="goNext()" id="btnNext">
+        <span id="btnNextTxt">Siguiente</span>
+        <span>→</span>
+      </button>
+    </div>
+
+  </div><!-- /s-quiz -->
+
+  <!-- ══════════════════════════════════════════
+       PANTALLA 2: RESULTADOS
+  ══════════════════════════════════════════ -->
+  <div id="s-results" class="hidden">
+
+    <div class="results-hero">
+      <span class="eyebrow">Evaluación Completada</span>
+      <div class="masthead-icon" id="resIcon">🏆</div>
+      <div class="result-grade" id="resGrade"></div>
+      <div class="result-msg"   id="resMsg"></div>
+      <p   class="result-sub"   id="resSub"></p>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-cell">
+        <span class="stat-num"  id="sPct"></span>
+        <span class="stat-label">Porcentaje</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-num"  id="sScore"></span>
+        <span class="stat-label">Correctas</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-num"  id="sWrong"></span>
+        <span class="stat-label">Incorrectas</span>
+      </div>
+    </div>
+
+    <div class="score-viz">
+      <div class="score-viz-label">
+        <span>0%</span><span>Resultado</span><span>100%</span>
+      </div>
+      <div class="score-viz-track">
+        <div class="score-viz-fill" id="scoreFill"></div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-ghost" onclick="resetQuiz()">↩ Reintentar</button>
+      <button class="btn-emerald" onclick="downloadResults(event)">⬇ Descargar PDF</button>
+    </div>
+
+    <div style="margin-top:48px;">
+      <p class="review-header">Revisión de respuestas</p>
+      <div id="reviewList"></div>
+    </div>
+
+  </div><!-- /s-results -->
+
+</div><!-- /panel-inner -->
+</div><!-- /panel -->
+</div><!-- /stage -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+/* ───────────────────────────────────────────────────
+   SEGURIDAD
+─────────────────────────────────────────────────── */
+function esc(s){
+  if(typeof s!=='string') return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+function validName(n){ return /^[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]{2,80}$/.test(n.trim()); }
+
+/* ───────────────────────────────────────────────────
+   DATOS
+─────────────────────────────────────────────────── */
+const QS=[
+  {q:"¿Cuál es el producto final más importante del trabajo de auditoría?",
+   o:["Los papeles de trabajo","El informe del auditor independiente","El contrato de auditoría","Las confirmaciones bancarias"],
+   c:1, exp:"El informe del auditor independiente es el producto final más importante porque comunica la opinión profesional sobre los estados financieros."},
+  {q:"Según NIA 700, ¿qué elemento debe aparecer PRIMERO en el informe del auditor?",
+   o:["Fundamento de la opinión","Responsabilidades del auditor","Opinión del auditor","Título del informe"],
+   c:2, exp:"La NIA 700 revisada establece que la opinión debe aparecer primero (tras el título y destinatario) para darle mayor prominencia."},
+  {q:"¿Cuántos elementos estructurados debe contener el informe del auditor según NIA 700?",
+   o:["10 elementos","13 elementos","15 elementos","8 elementos"],
+   c:1, exp:"El informe del auditor debe contener 13 elementos estructurados según la NIA 700."},
+  {q:"¿Qué tipo de opinión emite el auditor cuando los estados financieros están correctos en todos aspectos materiales?",
+   o:["Opinión con salvedades","Opinión adversa","Opinión sin salvedades","Abstención de opinión"],
+   c:2, exp:"La opinión sin salvedades (limpia) se emite cuando los estados financieros no presentan errores materiales."},
+  {q:"¿Quién es responsable de la preparación de los estados financieros?",
+   o:["El auditor externo","Los accionistas","La administración de la entidad","El gobierno corporativo"],
+   c:2, exp:"La administración es responsable de preparar y presentar razonablemente los estados financieros."},
+  {q:"El escepticismo profesional significa que el auditor debe:",
+   o:["Desconfiar siempre de la administración","Mantener una actitud cuestionadora y evaluar críticamente la evidencia","Aceptar toda la información proporcionada","Sospechar de fraude en todas las auditorías"],
+   c:1, exp:"El escepticismo profesional implica una actitud cuestionadora que incluye evaluar críticamente la evidencia, sin aceptar todo sin verificación."},
+  {q:"La fecha del informe del auditor NO debe ser anterior a:",
+   o:["La fecha de cierre del ejercicio","La fecha en que obtuvo evidencia suficiente y apropiada","La fecha de la junta de accionistas","La fecha del contrato de auditoría"],
+   c:1, exp:"La fecha del informe no puede ser anterior a cuando el auditor obtuvo evidencia suficiente y apropiada que sustenta su opinión."},
+  {q:"¿Qué frase utiliza el auditor en una opinión con salvedades?",
+   o:["En nuestra opinión adversa","Nos abstenemos de opinar","Excepto por o Salvo por","Sin ninguna salvedad"],
+   c:2, exp:"La opinión con salvedades usa obligatoriamente la expresión 'excepto por' o 'salvo por' para señalar el problema específico."},
+  {q:"Las Cuestiones Clave de Auditoría se incluyen obligatoriamente en informes de:",
+   o:["Todas las entidades sin excepción","Solo entidades pequeñas","Entidades cotizadas en bolsa","Entidades sin fines de lucro"],
+   c:2, exp:"Las Cuestiones Clave de Auditoría son obligatorias para auditorías de entidades cotizadas en bolsa."},
+  {q:"¿Qué nivel de seguridad proporciona una auditoría?",
+   o:["Seguridad absoluta","Seguridad razonable","Seguridad limitada","Seguridad total"],
+   c:1, exp:"La auditoría proporciona seguridad razonable (alta pero no absoluta) de que los estados financieros están libres de error material."},
+  {q:"¿Cuál NO es un tipo de usuario de la información financiera?",
+   o:["Inversionistas","Acreedores","Competidores","El propio auditor"],
+   c:3, exp:"El auditor examina los estados financieros pero no es un usuario de la información financiera; los usuarios son quienes toman decisiones basándose en ella."},
+  {q:"La opinión adversa se emite cuando:",
+   o:["Hay errores menores no materiales","El auditor no pudo obtener evidencia","Los estados financieros tienen errores materiales y generalizados","Existe una salvedad específica"],
+   c:2, exp:"La opinión adversa indica que los estados financieros tienen errores tan graves y generalizados que no son confiables."},
+  {q:"¿Qué debe incluir el título del informe según NIA 700?",
+   o:["La palabra 'Certificado'","La palabra 'Independiente'","La palabra 'Oficial'","La palabra 'Definitivo'"],
+   c:1, exp:"El título debe incluir la palabra 'independiente' para distinguirlo de otros informes (ej: 'Informe del Auditor Independiente')."},
+  {q:"La materialidad se refiere a:",
+   o:["La cantidad de papeles de trabajo","La importancia de los activos tangibles","La magnitud de error que podría influir en decisiones de usuarios","El tiempo que toma la auditoría"],
+   c:2, exp:"La materialidad es el umbral que determina si un error es lo suficientemente importante como para influir en las decisiones de los usuarios."}
+];
+
+/* ───────────────────────────────────────────────────
+   ESTADO
+─────────────────────────────────────────────────── */
+let cur=0, answers={}, userName='', streak=0, timerInt=null, timeLeft=30;
+const TOTAL_TIME=30;
+const CIRC=125.6; // 2π × 20
+
+/* ───────────────────────────────────────────────────
+   INICIO
+─────────────────────────────────────────────────── */
+function startQuiz(){
+  const inp=document.getElementById('inp-name');
+  const err=document.getElementById('name-err');
+  const raw=inp.value.trim();
+  inp.classList.remove('err'); err.classList.remove('show');
+
+  if(!raw){ return showErr(inp,err,'Por favor ingresa tu nombre para continuar.'); }
+  if(!validName(raw)){ return showErr(inp,err,'Solo se permiten letras y espacios (2–80 caracteres).'); }
+
+  userName=esc(raw);
+  cur=0; answers={}; streak=0;
+
+  show('s-quiz');
+  document.getElementById('qUser').textContent=userName;
+  loadQ();
+}
+
+function showErr(inp,err,msg){
+  inp.classList.add('err');
+  err.textContent=msg; err.classList.add('show');
+  inp.focus();
+  setTimeout(()=>inp.classList.remove('err'),600);
+}
+
+document.getElementById('inp-name').addEventListener('keydown',e=>{ if(e.key==='Enter') startQuiz(); });
+
+/* ───────────────────────────────────────────────────
+   TIMER
+─────────────────────────────────────────────────── */
+function startTimer(){
+  clearInterval(timerInt);
+  timeLeft=TOTAL_TIME;
+  tickTimer();
+  timerInt=setInterval(()=>{ timeLeft--; tickTimer(); if(timeLeft<=0){ clearInterval(timerInt); timeoutQ(); } },1000);
+}
+
+function tickTimer(){
+  const num=document.getElementById('timerNum');
+  const arc=document.getElementById('timerArc');
+  const lbl=document.getElementById('timerLabel');
+  num.textContent=timeLeft;
+  const offset=CIRC*(1-timeLeft/TOTAL_TIME);
+  arc.style.strokeDashoffset=offset;
+  arc.className='fill';
+  if(timeLeft<=10) arc.classList.add('warn');
+  if(timeLeft<=5)  arc.classList.add('danger');
+  lbl.textContent=timeLeft===1?'segundo restante':'segundos restantes';
+}
+
+function stopTimer(){ clearInterval(timerInt); }
+
+function timeoutQ(){
+  if(answers[cur]!==undefined) return;
+  answers[cur]=-1; streak=0;
+  lockOptions(QS[cur].correct,-1);
+  showFeedback(false, true, QS[cur]);
+  revealNext();
+}
+
+/* ───────────────────────────────────────────────────
+   PREGUNTA
+─────────────────────────────────────────────────── */
+function loadQ(){
+  const q=QS[cur];
+  const total=QS.length;
+  const pct=Math.round((cur/total)*100);
+
+  document.getElementById('qCounter').textContent=`${String(cur+1).padStart(2,'0')} / ${total}`;
+  document.getElementById('progBar').style.width=pct+'%';
+  document.getElementById('q-num-label').textContent=`Pregunta ${cur+1} de ${total}`;
+  document.getElementById('qText').textContent=q.q;
+
+  // Re-animar texto
+  const qt=document.getElementById('qText');
+  qt.style.animation='none'; qt.offsetHeight; qt.style.animation='';
+
+  // Opciones
+  const container=document.getElementById('opts');
+  container.innerHTML='';
+  q.o.forEach((txt,i)=>{
+    const d=document.createElement('div');
+    d.className='opt';
+    d.setAttribute('role','button'); d.setAttribute('tabindex','0');
+    d.innerHTML=`
+      <div class="opt-letter">${String.fromCharCode(65+i)}</div>
+      <div class="opt-text">${esc(txt)}</div>
+      <div class="opt-badge"></div>
+    `;
+    d.onclick=()=>pick(i);
+    d.onkeydown=e=>{ if(e.key==='Enter'||e.key===' ') pick(i); };
+    container.appendChild(d);
+  });
+
+  // Reset feedback
+  const fb=document.getElementById('feedback');
+  fb.className='feedback'; fb.classList.remove('show');
+  document.getElementById('nextWrap').classList.add('hidden');
+
+  // Racha
+  const sp=document.getElementById('streakPill');
+  if(streak>=2){ sp.textContent=`🔥 ×${streak}`; sp.classList.add('visible'); }
+  else { sp.classList.remove('visible'); }
+
+  startTimer();
+}
+
+/* ───────────────────────────────────────────────────
+   RESPUESTA
+─────────────────────────────────────────────────── */
+function pick(idx){
+  if(answers[cur]!==undefined) return;
+  stopTimer();
+  answers[cur]=idx;
+  const q=QS[cur];
+  const ok=(idx===q.c);
+  if(ok) streak++; else streak=0;
+  lockOptions(q.c, idx);
+  showFeedback(ok, false, q);
+  revealNext();
+}
+
+function lockOptions(correctIdx, chosenIdx){
+  document.querySelectorAll('.opt').forEach((el,i)=>{
+    el.classList.add('locked');
+    el.onclick=null; el.onkeydown=null;
+    el.setAttribute('tabindex','-1');
+    const badge=el.querySelector('.opt-badge');
+    if(i===correctIdx){
+      el.classList.add('opt-correct');
+      badge.textContent='✓';
+    } else if(i===chosenIdx && chosenIdx!==correctIdx){
+      el.classList.add('opt-wrong');
+      badge.textContent='✕';
+    }
+  });
+}
+
+function showFeedback(ok, timeout, q){
+  const fb=document.getElementById('feedback');
+  const head=document.getElementById('fb-head');
+  const body=document.getElementById('fb-body');
+  const exp =document.getElementById('fb-exp');
+
+  const okMsgs=['¡Correcto! Excelente dominio del tema.','¡Perfecto! Eso es auditoría.','¡Muy bien! Sigues en racha.','¡Acertaste! Conoces la NIA 700.'];
+  const badMsgs=['Respuesta incorrecta. Revisa la explicación.','No es la opción correcta. ¡A repasar!','Casi. Presta atención a la explicación.','Incorrecto, pero así se aprende. 💪'];
+
+  if(timeout){
+    fb.className='feedback fb-timeout show';
+    head.textContent='⏰ Tiempo agotado';
+    body.textContent='No respondiste a tiempo. La respuesta correcta está marcada en verde.';
+  } else if(ok){
+    fb.className='feedback fb-correct show';
+    head.textContent=okMsgs[Math.floor(Math.random()*okMsgs.length)];
+    body.textContent='';
+  } else {
+    fb.className='feedback fb-wrong show';
+    head.textContent=badMsgs[Math.floor(Math.random()*badMsgs.length)];
+    body.textContent=`Respuesta correcta: ${esc(q.o[q.c])}`;
+  }
+  exp.textContent=q.exp;
+}
+
+function revealNext(){
+  const wrap=document.getElementById('nextWrap');
+  wrap.classList.remove('hidden');
+  const lbl=document.getElementById('btnNextTxt');
+  lbl.textContent=(cur<QS.length-1)?'Siguiente':'Ver resultados';
+  document.getElementById('btnNext').focus();
+}
+
+function goNext(){
+  if(cur<QS.length-1){ cur++; loadQ(); }
+  else showResults();
+}
+
+/* ───────────────────────────────────────────────────
+   RESULTADOS
+─────────────────────────────────────────────────── */
+function calcScore(){ return QS.reduce((a,q,i)=>a+(answers[i]===q.c?1:0),0); }
+
+function getGrade(pct){
+  if(pct>=90) return {g:'A',icon:'🏆',msg:'¡Dominio sobresaliente!',sub:'Tu comprensión de la NIA 700 es de nivel profesional. Excelente trabajo.',cls:'grade-badge-A'};
+  if(pct>=80) return {g:'B',icon:'🥈',msg:'¡Muy buen desempeño!',   sub:'Tienes un sólido conocimiento de la NIA 700. Repasa un par de conceptos.',cls:'grade-badge-B'};
+  if(pct>=70) return {g:'C',icon:'🎗️',msg:'Resultado aceptable.',    sub:'Vas bien encaminado. Dedica más tiempo a los tipos de opinión del auditor.',cls:'grade-badge-C'};
+  if(pct>=60) return {g:'D',icon:'📚',msg:'Necesitas repasar.',      sub:'Repasa los elementos del informe según NIA 700 antes de tu próximo examen.',cls:'grade-badge-D'};
+  return              {g:'F',icon:'📖',msg:'Oportunidad de mejora.',  sub:'No te rindas. Revisa el material completo e intenta de nuevo. ¡Tú puedes!',cls:'grade-badge-F'};
+}
+
+function showResults(){
+  stopTimer();
+  const score=calcScore();
+  const pct=((score/QS.length)*100).toFixed(1);
+  const info=getGrade(parseFloat(pct));
+
+  document.getElementById('resIcon').textContent=info.icon;
+  const gradeEl=document.getElementById('resGrade');
+  gradeEl.textContent=info.g;
+  gradeEl.className='result-grade '+info.cls;
+  document.getElementById('resMsg').textContent=info.msg;
+  document.getElementById('resSub').textContent=info.sub;
+
+  document.getElementById('sPct').textContent=pct+'%';
+  document.getElementById('sScore').textContent=score+'/'+QS.length;
+  document.getElementById('sWrong').textContent=(QS.length-score)+'/'+QS.length;
+
+  show('s-results');
+
+  // Animar barra
+  requestAnimationFrame(()=>{
+    setTimeout(()=>{ document.getElementById('scoreFill').style.width=pct+'%'; },100);
+  });
+
+  // Confetti si aprueba
+  if(parseFloat(pct)>=60) setTimeout(launchConfetti, 300);
+
+  // Revisión
+  const list=document.getElementById('reviewList');
+  list.innerHTML='';
+  QS.forEach((q,i)=>{
+    const ua=answers[i];
+    const ok=(ua===q.c);
+    const uTxt=(ua===-1||ua===undefined)?'Sin respuesta (tiempo agotado)':esc(q.o[ua]);
+    const div=document.createElement('div');
+    div.className='review-item';
+    div.style.animationDelay=(i*.04)+'s';
+    div.innerHTML=`
+      <div class="review-row1">
+        <span class="review-idx">${String(i+1).padStart(2,'0')}</span>
+        <span class="review-q">${esc(q.q)}</span>
+        <span class="review-status ${ok?'ok':'bad'}">${ok?'Correcto':'Incorrecto'}</span>
+      </div>
+      <div class="review-answers">
+        <strong>Tu respuesta:</strong> ${uTxt}
+        ${!ok?`<br><strong style="color:var(--emerald)">Correcta:</strong> ${esc(q.o[q.c])}`:''}
+      </div>
+      <div class="review-exp">${esc(q.exp)}</div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+/* ───────────────────────────────────────────────────
+   RESET
+─────────────────────────────────────────────────── */
+function resetQuiz(){
+  stopTimer();
+  cur=0; answers={}; userName=''; streak=0;
+  document.getElementById('inp-name').value='';
+  document.getElementById('name-err').classList.remove('show');
+  show('s-start');
+}
+
+/* ───────────────────────────────────────────────────
+   SCREEN SWITCH
+─────────────────────────────────────────────────── */
+function show(id){
+  ['s-start','s-quiz','s-results'].forEach(s=>{
+    const el=document.getElementById(s);
+    el.classList.toggle('hidden',s!==id);
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ───────────────────────────────────────────────────
+   CONFETTI
+─────────────────────────────────────────────────── */
+function launchConfetti(){
+  const palette=['#c9a84c','#0f7b52','#1a5f9e','#0d0d0d','#faf7f0','#c0392b'];
+  for(let i=0;i<80;i++){
+    const el=document.createElement('div');
+    el.className='confetti-bit';
+    const sz=Math.random()*10+5;
+    el.style.cssText=`
+      left:${Math.random()*100}vw;
+      width:${sz}px; height:${sz}px;
+      background:${palette[Math.floor(Math.random()*palette.length)]};
+      border-radius:${Math.random()>.5?'50%':'2px'};
+      animation-duration:${Math.random()*2+1.5}s;
+      animation-delay:${Math.random()*1}s;
+      opacity:1;
+    `;
+    document.body.appendChild(el);
+    el.addEventListener('animationend',()=>el.remove());
+  }
+}
+
+/* ───────────────────────────────────────────────────
+   PDF
+─────────────────────────────────────────────────── */
+function downloadResults(evt){
+  const btn=evt.currentTarget;
+  const score=calcScore();
+  const pct=((score/QS.length)*100).toFixed(1);
+  const info=getGrade(parseFloat(pct));
+  const orig=btn.textContent;
+  btn.textContent='⏳ Generando…'; btn.disabled=true;
+
+  const wrap=document.createElement('div');
+  wrap.style.cssText='position:absolute;left:-9999px;width:750px;background:#fff;padding:40px;font-family:Georgia,serif;';
+
+  const gradeColorMap={'grade-badge-A':'#c9a84c','grade-badge-B':'#1a5f9e','grade-badge-C':'#d97706','grade-badge-D':'#d97706','grade-badge-F':'#c0392b'};
+  const gc=gradeColorMap[info.cls]||'#333';
+
+  let html=`
+    <div style="text-align:center;border-bottom:3px solid #c9a84c;padding-bottom:20px;margin-bottom:30px;">
+      <p style="font-size:11px;letter-spacing:3px;color:#c9a84c;text-transform:uppercase;margin-bottom:12px;">Contaduría Pública · Auditoría II</p>
+      <h1 style="font-size:28px;color:#0d0d0d;margin:0 0 6px;">Informe del Auditor — NIA 700</h1>
+      <p style="color:#666;font-size:14px;">Evaluación de competencias · ${new Date().toLocaleDateString('es-MX',{year:'numeric',month:'long',day:'numeric'})}</p>
+    </div>
+    <div style="background:#faf7f0;padding:24px;margin-bottom:28px;border:1px solid #e5e0d0;">
+      <p style="font-size:13px;color:#666;margin-bottom:4px;">Estudiante</p>
+      <h2 style="font-size:22px;margin:0 0 16px;color:#0d0d0d;">${esc(userName)}</h2>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+        <div style="background:#fff;padding:16px;text-align:center;border:1px solid #e5e0d0;">
+          <div style="font-size:11px;color:#999;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Calificación</div>
+          <div style="font-size:42px;font-weight:bold;color:${gc};">${esc(info.g)}</div>
+          <div style="font-size:12px;color:#666;">${esc(info.msg)}</div>
+        </div>
+        <div style="background:#fff;padding:16px;text-align:center;border:1px solid #e5e0d0;">
+          <div style="font-size:11px;color:#999;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Porcentaje</div>
+          <div style="font-size:42px;font-weight:bold;color:#c9a84c;">${pct}%</div>
+          <div style="font-size:12px;color:#666;">De 100%</div>
+        </div>
+        <div style="background:#fff;padding:16px;text-align:center;border:1px solid #e5e0d0;">
+          <div style="font-size:11px;color:#999;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Correctas</div>
+          <div style="font-size:42px;font-weight:bold;color:#0f7b52;">${score}</div>
+          <div style="font-size:12px;color:#666;">De ${QS.length}</div>
+        </div>
+      </div>
+    </div>
+    <h3 style="font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#c9a84c;border-bottom:2px solid #c9a84c;padding-bottom:8px;margin-bottom:20px;">Detalle de Respuestas</h3>
+  `;
+
+  QS.forEach((q,i)=>{
+    const ua=answers[i];
+    const ok=(ua===q.c);
+    const uTxt=(ua===-1||ua===undefined)?'Sin respuesta':q.o[ua];
+    html+=`
+      <div style="margin-bottom:16px;padding:14px;border-left:3px solid ${ok?'#0f7b52':'#c0392b'};background:${ok?'#f0faf5':'#fdf0f0'};break-inside:avoid;page-break-inside:avoid;">
+        <div style="font-weight:bold;font-size:13px;margin-bottom:8px;">
+          ${ok?'✓':'✗'} ${i+1}. ${esc(q.q)}
+        </div>
+        <div style="font-size:12px;color:#555;margin-left:18px;line-height:1.6;">
+          <strong>Respuesta:</strong> ${esc(uTxt)}<br>
+          ${!ok?`<strong style="color:#0f7b52">Correcta:</strong> ${esc(q.o[q.c])}<br>`:''}
+          <em style="color:#888;font-size:11px;">${esc(q.exp)}</em>
+        </div>
+      </div>
+    `;
+  });
+
+  html+=`
+    <div style="text-align:center;margin-top:40px;padding-top:16px;border-top:1px solid #e5e0d0;color:#999;font-size:11px;">
+      Mtra. Jaquelina Judith Sánchez Antele · Auditoría II · NIA 700
+    </div>
+  `;
+
+  wrap.innerHTML=html;
+  document.body.appendChild(wrap);
+
+  setTimeout(()=>{
+    html2canvas(wrap,{scale:2,useCORS:true,logging:false,backgroundColor:'#fff',windowWidth:750}).then(canvas=>{
+      const imgData=canvas.toDataURL('image/png');
+      const {jsPDF}=window.jspdf;
+      const pdf=new jsPDF('p','mm','letter');
+      const W=215.9,H=279.4,M=12,cW=W-M*2,cH=H-M*2;
+      const iW=cW, iH=(canvas.height*cW)/canvas.width;
+      let left=iH, pos=M;
+      pdf.addImage(imgData,'PNG',M,pos,iW,iH);
+      left-=cH;
+      while(left>0){
+        pos=M-(iH-left);
+        pdf.addPage();
+        pdf.addImage(imgData,'PNG',M,pos,iW,iH);
+        left-=cH;
+      }
+      const safeName=userName.replace(/[^a-zA-Z0-9]/g,'_').substring(0,40);
+      const dateStr=new Date().toLocaleDateString('es-MX').replace(/\//g,'-');
+      pdf.save(`NIA700_${safeName}_${dateStr}.pdf`);
+      document.body.removeChild(wrap);
+      btn.textContent=orig; btn.disabled=false;
+    }).catch(()=>{
+      document.body.removeChild(wrap);
+      btn.textContent=orig; btn.disabled=false;
+      alert('Error al generar el PDF. Por favor intenta de nuevo.');
+    });
+  },150);
+}
+</script>
+</body>
+</html>
